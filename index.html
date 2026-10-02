@@ -167,8 +167,8 @@ ol.refs li{margin-bottom:8px}
     <fieldset>
       <legend>Coloring</legend>
       <div class="seg">
-        <label><input type="radio" name="cm" value="all" checked><span>Every cluster</span></label>
-        <label><input type="radio" name="cm" value="big"><span>Largest only</span></label>
+        <label><input type="radio" name="cm" value="all"><span>Every cluster</span></label>
+        <label><input type="radio" name="cm" value="big" checked><span>Largest only</span></label>
         <label><input type="radio" name="cm" value="center"><span>Center’s cluster</span></label>
       </div>
     </fieldset>
@@ -495,7 +495,7 @@ function drawAll(){
 const M={};
 
 /* ---------- live Cayley tree ---------- */
-const T={p:0.5,seed:1,mode:'all'};
+const T={p:0.5,seed:1,mode:'big'};
 const LDEP={2:30,3:7,4:5,5:4};
 function buildTree(){
   const z=Z, L=LDEP[z]; const par=[-1], gen=[0], kids=[[]];
