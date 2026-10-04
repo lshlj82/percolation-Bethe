@@ -128,6 +128,12 @@ ol.refs{max-width:80ch; padding-left:1.4em; font-size:14.5px; line-height:1.55}
 ol.refs li{margin-bottom:8px}
 .curve-cap{font-size:13.5px; color:var(--muted); margin:0 0 6px} .curve-cap b{color:var(--ink); display:block; font-size:14.5px}
 .eq{font-family:var(--serif); font-size:17px; background:var(--panel); border:1px solid var(--rule); border-radius:5px; padding:10px 14px; display:inline-block; margin:6px 0 10px}
+
+.rad{white-space:nowrap}
+.rad .rs{display:inline-block; transform:scale(1.05,1.22); transform-origin:100% 85%; margin-right:-0.05em}
+.rad .rc{display:inline-block; border-top:0.075em solid currentColor; padding:0.04em 0.12em 0 0.1em; line-height:1.1}
+.ss{display:inline-flex; flex-direction:column; vertical-align:0.5em; line-height:1; font-size:0.72em; margin-left:0.04em; margin-right:0.04em}
+.ss sup,.ss sub{font-size:1em; vertical-align:baseline; line-height:1.02; position:static}
 </style>
 </head>
 <body>
@@ -194,7 +200,7 @@ ol.refs li{margin-bottom:8px}
   <p class="prose">A cluster extends indefinitely only if a walk along it, never retracing its steps, can always continue. Each site reached offers z − 1 new branches, each occupied with probability p, so percolation needs p(z − 1) ≥ 1:</p>
   <div class="eq">p<sub>c</sub> = 1/(z − 1)</div>
   <p class="prose">For z = 2 this gives p<sub>c</sub> = 1, the chain. The value depends on z, so p<sub>c</sub> is not universal. To find the probability P<sub>∞</sub>(p) that a site belongs to the infinite cluster, let Q<sub>∞</sub> be the probability that a given branch does not connect to it. Either the branch’s first site is empty, or it is occupied and none of its z − 1 sub-branches connect:</p>
-  <div class="eq">Q<sub>∞</sub> = 1 − p + p Q<sub>∞</sub><sup>z−1</sup>,  P<sub>∞</sub>(p) = p [1 − Q<sub>∞</sub><sup>z</sup>]</div>
+  <div class="eq">Q<sub>∞</sub> = 1 − p + p Q<span class="ss"><sup>z−1</sup><sub>∞</sub></span>,  P<sub>∞</sub>(p) = p [1 − Q<span class="ss"><sup>z</sup><sub>∞</sub></span>]</div>
   <p class="prose">For z = 3 the nontrivial root is Q<sub>∞</sub> = (1 − p)/p above p<sub>c</sub> = 1/2. In general P<sub>∞</sub> picks up linearly, P<sub>∞</sub> ≈ [2z/(z − 2)](p − p<sub>c</sub>), so β = 1 for every z. The dots come from growing the center’s cluster generation by generation on an infinite lattice; a cluster still growing after thousands of generations, or past 200 000 sites in one generation, counts as infinite.</p>
   <div class="status">
     <span id="chips" class="row" style="gap:14px"></span>
@@ -224,7 +230,7 @@ ol.refs li{margin-bottom:8px}
   <h2>Cluster numbers</h2>
   <p class="prose">For z &gt; 2 clusters of the same size s come in many shapes, but on a tree they all have the same number of perimeter sites, t = 2 + s(z − 2). So n(s, p) = g(s, t)(1 − p)<sup>t</sup>p<sup>s</sup> with one degeneracy factor, which Fisher and Essam counted: g = z[(z − 1)s]! / (s! [(z − 2)s + 2]!). Near p<sub>c</sub> it factorizes as</p>
   <div class="eq">n(s, p) = [(1 − p)/(1 − p<sub>c</sub>)]<sup>2</sup> n(s, p<sub>c</sub>) e<sup>−s/s<sub>ξ</sub></sup>,  s<sub>ξ</sub> = −1 / ln[(p/p<sub>c</sub>)((1 − p)/(1 − p<sub>c</sub>))<sup>z−2</sup>]</div>
-  <p class="prose">At p<sub>c</sub>, n(s, p<sub>c</sub>) ∝ s<sup>−τ</sup>. Requiring Σ s n(s, p<sub>c</sub>) to stay finite while Σ s² n(s, p<sub>c</sub>) diverges gives 2 &lt; τ ≤ 3, and matching χ ∝ s<sub>ξ</sub><sup>3−τ</sup> with χ ∝ (p<sub>c</sub> − p)<sup>−1</sup> and s<sub>ξ</sub> ∝ (p − p<sub>c</sub>)<sup>−2</sup> gives τ = 5/2.</p>
+  <p class="prose">At p<sub>c</sub>, n(s, p<sub>c</sub>) ∝ s<sup>−τ</sup>. Requiring Σ s n(s, p<sub>c</sub>) to stay finite while Σ s² n(s, p<sub>c</sub>) diverges gives 2 &lt; τ ≤ 3, and matching χ ∝ s<span class="ss"><sup>3−τ</sup><sub>ξ</sub></span> with χ ∝ (p<sub>c</sub> − p)<sup>−1</sup> and s<sub>ξ</sub> ∝ (p − p<sub>c</sub>)<sup>−2</sup> gives τ = 5/2.</p>
   <div class="figs">
     <figure><figcaption><b>Cluster number density n(s, p)</b>Lines: exact. Dots: from the simulated clusters at p<sub>c</sub>. Dotted: slope −5/2. Away from p<sub>c</sub> the power law is cut off at s ≈ s<sub>ξ</sub>.</figcaption><canvas id="c5"></canvas><p class="fit" id="t5"></p></figure>
     <figure><figcaption><b>Characteristic cluster size s<sub>ξ</sub> ∝ |p − p<sub>c</sub>|<sup>−1/σ</sup></b>Log–log, below p<sub>c</sub> (dark) and above (red). Dotted: slope −2, so σ = 1/2. Above p<sub>c</sub> it measures the largest finite clusters, which shrink as the infinite cluster swallows them. For z = 3 the two branches coincide, since (1 − p)p is symmetric about p<sub>c</sub> = 1/2.</figcaption><canvas id="c6"></canvas></figure>
@@ -286,6 +292,22 @@ function linReg(xs,ys){
   return {slope,icpt,se};
 }
 
+function richParts(s){ const out=[]; let i=0, buf=''; const push=(t,m)=>{ if (t) out.push({t,m}); };
+  while (i<s.length){ const ch=s[i];
+    if ((ch==='_'||ch==='^') && i+1<s.length){ push(buf,0); buf=''; const m=ch==='_'?1:2; let t;
+      if (s[i+1]==='{'){ const j=s.indexOf('}',i+2); t=s.slice(i+2,j<0?s.length:j); i=j<0?s.length:j+1; }
+      else { t=String.fromCodePoint(s.codePointAt(i+1)); i+=1+t.length; }
+      push(t,m); }
+    else { buf+=ch; i++; } }
+  push(buf,0); return out; }
+function drawRich(ctx,s,x,y){
+  const parts=richParts(String(s)); if (parts.length===1 && parts[0].m===0){ ctx.fillText(s,x,y); return; }
+  const font=ctx.font, mm=font.match(/(\d+(?:\.\d+)?)px/), px=mm?+mm[1]:11, small=font.replace(/(\d+(?:\.\d+)?)px/,(px*0.72).toFixed(1)+'px'), al=ctx.textAlign;
+  let w=0; parts.forEach(p=>{ ctx.font=p.m?small:font; p.w=ctx.measureText(p.t).width; w+=p.w; });
+  let x0= al==='center' ? x-w/2 : (al==='right'||al==='end') ? x-w : x;
+  ctx.textAlign='left';
+  parts.forEach(p=>{ ctx.font=p.m?small:font; ctx.fillText(p.t,x0,y+(p.m===1?px*0.32:p.m===2?-px*0.38:0)); x0+=p.w; });
+  ctx.textAlign=al; ctx.font=font; }
 /* ---------- plotting ---------- */
 const SUP={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
 const supNum = n => String(n).split('').map(c=>SUP[c]||c).join('');
@@ -337,7 +359,7 @@ function plot(cv,o){
   ticks(y0,y1,o.logy).forEach(([v,l])=>{ const py=Math.round(Y(v))+.5; ctx.beginPath(); ctx.moveTo(m.l,py); ctx.lineTo(m.l+pw,py); ctx.stroke(); ctx.fillText(l,m.l-6,py); });
   ctx.strokeStyle=C.rule; ctx.strokeRect(m.l+.5,m.t+.5,pw-1,ph-1);
   ctx.save(); ctx.beginPath(); ctx.rect(m.l,m.t,pw,ph); ctx.clip();
-  (o.vlines||[]).forEach(v=>{ if (v.x<x0||v.x>x1) return; ctx.strokeStyle=v.color; ctx.lineWidth=v.width||1; ctx.setLineDash(v.dash||[]); const px=X(v.x); ctx.beginPath(); ctx.moveTo(px,m.t); ctx.lineTo(px,m.t+ph); ctx.stroke(); ctx.setLineDash([]); if (v.label){ ctx.fillStyle=v.color; ctx.textAlign='left'; ctx.textBaseline='top'; ctx.fillText(v.label,px+4,m.t+4); } });
+  (o.vlines||[]).forEach(v=>{ if (v.x<x0||v.x>x1) return; ctx.strokeStyle=v.color; ctx.lineWidth=v.width||1; ctx.setLineDash(v.dash||[]); const px=X(v.x); ctx.beginPath(); ctx.moveTo(px,m.t); ctx.lineTo(px,m.t+ph); ctx.stroke(); ctx.setLineDash([]); if (v.label){ ctx.fillStyle=v.color; ctx.textAlign='left'; ctx.textBaseline='top'; drawRich(ctx,v.label,px+4,m.t+4); } });
   series.forEach(s=>{
     ctx.strokeStyle=s.color; ctx.fillStyle=s.color; ctx.lineWidth=s.width||1.6; ctx.setLineDash(s.dash||[]); ctx.globalAlpha=s.alpha||1;
     if (s.dots){ s.pts.forEach(p=>{ if (!isFinite(p[1])||(o.logy&&p[1]<=0)) return; ctx.beginPath(); ctx.arc(X(p[0]),Y(p[1]),s.r||4,0,7); ctx.fill(); }); }
@@ -346,8 +368,8 @@ function plot(cv,o){
   });
   ctx.restore();
   ctx.fillStyle=C.muted; ctx.textAlign='center'; ctx.textBaseline='bottom';
-  if (o.xlabel) ctx.fillText(o.xlabel, m.l+pw/2, H-1);
-  if (o.ylabel){ ctx.save(); ctx.translate(11,m.t+ph/2); ctx.rotate(-Math.PI/2); ctx.textBaseline='middle'; ctx.fillText(o.ylabel,0,0); ctx.restore(); }
+  if (o.xlabel) drawRich(ctx,o.xlabel, m.l+pw/2, H-1);
+  if (o.ylabel){ ctx.save(); ctx.translate(11,m.t+ph/2); ctx.rotate(-Math.PI/2); ctx.textBaseline='middle'; drawRich(ctx,o.ylabel,0,0); ctx.restore(); }
 }
 
 
@@ -432,23 +454,23 @@ function drawAll(){
   ser1.push({color:C.accent,width:2.2,pts:P.map(p=>[p,Pinf(p,z)])});
   if (z>2) ser1.push({color:C.ink,dash:[6,4],width:1.2,noScale:true,pts:[[pc,0],[Math.min(1,pc+0.6/A),0.6]]});
   ser1.push({dots:true,r:4,color:C.crit,pts:sim.filter(s=>!s.crit).map(s=>[s.p,s.p*s.inf/s.cnt])});
-  plot($('c1'),{x:[0,1],y:[-0.02,1.02],series:ser1,vlines:[{x:pc,color:C.crit,dash:[4,4],label:'pc'}],xlabel:'p',ylabel:'P∞(p)'});
+  plot($('c1'),{x:[0,1],y:[-0.02,1.02],series:ser1,vlines:[{x:pc,color:C.crit,dash:[4,4],label:'p_c'}],xlabel:'p',ylabel:'P_∞(p)'});
   if (z>2){
     const xs=logspace(1e-4,1-pc,120);
     const simB=sim.filter(s=>s.y!==undefined).map(s=>[s.p-pc,s.p*s.inf/s.cnt]);
-    plot($('c2'),{x:[1e-4,1],logx:true,logy:true,series:[{color:C.accent,width:2,pts:xs.map(x=>[x,Pinf(pc+x,z)])},{color:C.muted,dash:[2,4],width:1.2,noScale:true,pts:xs.map(x=>[x,A*x])},{dots:true,r:4,color:C.crit,pts:simB}],xlabel:'p − pc',ylabel:'P∞'});
+    plot($('c2'),{x:[1e-4,1],logx:true,logy:true,series:[{color:C.accent,width:2,pts:xs.map(x=>[x,Pinf(pc+x,z)])},{color:C.muted,dash:[2,4],width:1.2,noScale:true,pts:xs.map(x=>[x,A*x])},{dots:true,r:4,color:C.crit,pts:simB}],xlabel:'p − p_c',ylabel:'P_∞'});
     const fb=simB.filter(q=>q[0]<=0.05*(1-pc)+1e-12&&q[1]>0);
     const fit=fb.length>=3?linReg(fb.map(q=>Math.log(q[0])),fb.map(q=>Math.log(q[1]))):null;
     $('t2').innerHTML=fit?`Simulation slope for p − p<sub>c</sub> ≤ ${(0.05*(1-pc)).toFixed(3)}: β ≈ <b>${fit.slope.toFixed(3)}</b> <span style="color:var(--muted)">exact 1</span>`:'';
     M.beta=fit?fit.slope:NaN;
-  } else { plot($('c2'),{x:[1e-4,1],logx:true,logy:true,series:[]}); $('t2').textContent='For z = 2, p_c = 1 and there is no p above it: P∞ jumps from 0 to 1, so the transition is not critical in the strict sense.'; M.beta=NaN; }
+  } else { plot($('c2'),{x:[1e-4,1],logx:true,logy:true,series:[]}); $('t2').innerHTML='For z = 2, p<sub>c</sub> = 1 and there is no p above it: P<sub>∞</sub> jumps from 0 to 1, so the transition is not critical in the strict sense.'; M.beta=NaN; }
   // chi
   const below=P.filter(p=>p<pc*0.995);
   const simX=sim.filter(s=>s.nF>0&&!s.crit).map(s=>[s.p,s.sF/s.nF]);
-  plot($('c3'),{x:[0,1],y:[0,60],series:[{color:C.accent,width:2.2,pts:below.map(p=>[p,chiTh(p,z)])},{dots:true,r:4,color:C.crit,pts:simX}],vlines:[{x:pc,color:C.crit,dash:[4,4],label:'pc'}],xlabel:'p',ylabel:'χ(p)'});
+  plot($('c3'),{x:[0,1],y:[0,60],series:[{color:C.accent,width:2.2,pts:below.map(p=>[p,chiTh(p,z)])},{dots:true,r:4,color:C.crit,pts:simX}],vlines:[{x:pc,color:C.crit,dash:[4,4],label:'p_c'}],xlabel:'p',ylabel:'χ(p)'});
   const xs4=logspace(1e-4,pc,120);
   const simX4=sim.filter(s=>s.x!==undefined).map(s=>[pc-s.p,s.sF/s.nF]);
-  plot($('c4'),{x:[1e-4,1],logx:true,logy:true,series:[{color:C.accent,width:2,pts:xs4.map(x=>[x,chiTh(pc-x,z)])},{color:C.muted,dash:[2,4],width:1.2,noScale:true,pts:xs4.map(x=>[x,pc*(1+pc)/x])},{dots:true,r:4,color:C.crit,pts:simX4}],xlabel:'pc − p',ylabel:'χ'});
+  plot($('c4'),{x:[1e-4,1],logx:true,logy:true,series:[{color:C.accent,width:2,pts:xs4.map(x=>[x,chiTh(pc-x,z)])},{color:C.muted,dash:[2,4],width:1.2,noScale:true,pts:xs4.map(x=>[x,pc*(1+pc)/x])},{dots:true,r:4,color:C.crit,pts:simX4}],xlabel:'p_c − p',ylabel:'χ'});
   const fg=simX4.filter(q=>q[0]<=0.5*pc+1e-12);
   const fitg=fg.length>=3?linReg(fg.map(q=>Math.log(q[0])),fg.map(q=>Math.log(q[1]))):null;
   $('t4').innerHTML=fitg?`Simulation slope for p<sub>c</sub> − p ≤ ${(0.5*pc).toFixed(3)}: −γ ≈ <b>${fitg.slope.toFixed(3)}</b> <span style="color:var(--muted)">exact −1 (the slope approaches −1 as p → p<sub>c</sub>)</span>`:'';
@@ -472,7 +494,7 @@ function drawAll(){
   const ser6=[{color:C.ink,width:2,pts:xs6.filter(x=>x<pc).map(x=>[x,sXi(pc-x,z)])}];
   if (z>2) ser6.push({color:C.crit,width:2,pts:xs6.filter(x=>x<1-pc).map(x=>[x,sXi(pc+x,z)])});
   ser6.push({color:C.muted,dash:[2,4],width:1.2,noScale:true,pts:xs6.map(x=>[x,sXi(pc-0.001,z)*Math.pow(x/0.001,-2)])});
-  plot($('c6'),{x:[1e-4,0.3],logx:true,logy:true,series:ser6,xlabel:'|p − pc|',ylabel:'s_ξ'});
+  plot($('c6'),{x:[1e-4,0.3],logx:true,logy:true,series:ser6,xlabel:'|p − p_c|',ylabel:'s_ξ'});
   // N(l)
   const ls=Array.from({length:LG+1},(_,l)=>l);
   const cl=[[0.5,C.l16],[0.8,C.l64],[0.9,C.l128],[1,C.accent]];
