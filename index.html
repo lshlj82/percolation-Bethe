@@ -244,7 +244,7 @@ button.theme-btn svg{width:20px; height:20px; fill:none; stroke:currentColor; st
   <p class="prose">At p<sub>c</sub>, n(s, p<sub>c</sub>) ∝ s<sup>−τ</sup>. Requiring Σ s n(s, p<sub>c</sub>) to stay finite while Σ s² n(s, p<sub>c</sub>) diverges gives 2 &lt; τ ≤ 3, and matching χ ∝ s<span class="ss"><sup>3−τ</sup><sub>ξ</sub></span> with χ ∝ (p<sub>c</sub> − p)<sup>−1</sup> and s<sub>ξ</sub> ∝ (p − p<sub>c</sub>)<sup>−2</sup> gives τ = 5/2.</p>
   <div class="figs">
     <figure><figcaption><b>Cluster number density n(s, p)</b>Lines: exact. Dots: from the simulated clusters at p<sub>c</sub>. Dotted: slope −5/2. Away from p<sub>c</sub> the power law is cut off at s ≈ s<sub>ξ</sub>.</figcaption><canvas id="c5"></canvas><p class="fit" id="t5"></p></figure>
-    <figure><figcaption><b>Characteristic cluster size s<sub>ξ</sub> ∝ |p − p<sub>c</sub>|<sup>−1/σ</sup></b>Log–log, below p<sub>c</sub> (dark) and above (red). Dotted: slope −2, so σ = 1/2. Above p<sub>c</sub> it measures the largest finite clusters, which shrink as the infinite cluster swallows them. For z = 3 the two branches coincide, since (1 − p)p is symmetric about p<sub>c</sub> = 1/2.</figcaption><canvas id="c6"></canvas></figure>
+    <figure><figcaption><b>Characteristic cluster size s<sub>ξ</sub> ∝ |p − p<sub>c</sub>|<sup>−1/σ</sup></b>Log–log, below p<sub>c</sub> (dark) and above (red). Dotted: slope −2, so σ = 1/2 (for z = 2, the chain, slope −1 and σ = 1, since s<sub>ξ</sub> = −1/ln p ≈ (1 − p)<sup>−1</sup>). Above p<sub>c</sub> it measures the largest finite clusters, which shrink as the infinite cluster swallows them. For z = 3 the two branches coincide, since (1 − p)p is symmetric about p<sub>c</sub> = 1/2.</figcaption><canvas id="c6"></canvas></figure>
   </div>
 </section>
 
@@ -395,7 +395,8 @@ function Qinf(p,z){
   for (let i=0;i<200;i++){ const m=(lo+hi)/2; if (g(m)>0) lo=m; else hi=m; }
   return (lo+hi)/2;
 }
-const Pinf=(p,z)=>p<=pcOf(z)?0:p*(1-Math.pow(Qinf(p,z),z));
+// for z = 2 (the chain) P_∞ is 0 for every p < 1 and jumps to 1 at the endpoint p = p_c = 1
+const Pinf=(p,z)=>p<=pcOf(z)?(z===2&&p>=1?1:0):p*(1-Math.pow(Qinf(p,z),z));
 const chiTh=(p,z)=>p<pcOf(z)?(1+p)/(1-(z-1)*p):NaN;
 function lgamma(x){ const c=[0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7]; if (x<0.5) return Math.log(Math.PI/Math.sin(Math.PI*x))-lgamma(1-x); x-=1; let a=c[0]; const t=x+7.5; for (let i=1;i<9;i++) a+=c[i]/(x+i); return 0.5*Math.log(2*Math.PI)+(x+0.5)*Math.log(t)-t+Math.log(a); }
 function nExact(s,p,z){ if (p<=0||p>=1) return 0; const lg=Math.log(z)+lgamma((z-1)*s+1)-lgamma(s+1)-lgamma((z-2)*s+3); return Math.exp(lg+s*Math.log(p)+((z-2)*s+2)*Math.log(1-p)); }
@@ -461,8 +462,12 @@ function drawAll(){
   const P=Array.from({length:401},(_,i)=>i/400);
   const sim=states.filter(s=>s.cnt>=50);
   // P_inf
-  const ser1=OTHERZ.filter(q=>q!==z).map(q=>({color:C.muted,width:1.1,pts:P.map(p=>[p,Pinf(p,q)])}));
-  ser1.push({color:C.accent,width:2.2,pts:P.map(p=>[p,Pinf(p,z)])});
+  // the chain's jump at p = 1 is drawn as a separate endpoint dot, not as a steep line
+  const pinfPts=q=>(q===2?P.filter(p=>p<1):P).map(p=>[p,Pinf(p,q)]);
+  const ser1=OTHERZ.filter(q=>q!==z).map(q=>({color:C.muted,width:1.1,pts:pinfPts(q)}));
+  if (z!==2) ser1.push({dots:true,r:3,color:C.muted,pts:[[1,Pinf(1,2)]]});
+  ser1.push({color:C.accent,width:2.2,pts:pinfPts(z)});
+  if (z===2) ser1.push({dots:true,r:4.5,color:C.accent,pts:[[1,Pinf(1,2)]]});
   if (z>2) ser1.push({color:C.ink,dash:[6,4],width:1.2,noScale:true,pts:[[pc,0],[Math.min(1,pc+0.6/A),0.6]]});
   ser1.push({dots:true,r:4,color:C.crit,pts:sim.filter(s=>!s.crit).map(s=>[s.p,s.p*s.inf/s.cnt])});
   plot($('c1'),{x:[0,1],y:[-0.02,1.02],series:ser1,vlines:[{x:pc,color:C.crit,dash:[4,4],label:'p_c'}],xlabel:'p',ylabel:'P_∞(p)'});
@@ -504,7 +509,8 @@ function drawAll(){
   const xs6=logspace(1e-4,0.3,120);
   const ser6=[{color:C.ink,width:2,pts:xs6.filter(x=>x<pc).map(x=>[x,sXi(pc-x,z)])}];
   if (z>2) ser6.push({color:C.crit,width:2,pts:xs6.filter(x=>x<1-pc).map(x=>[x,sXi(pc+x,z)])});
-  ser6.push({color:C.muted,dash:[2,4],width:1.2,noScale:true,pts:xs6.map(x=>[x,sXi(pc-0.001,z)*Math.pow(x/0.001,-2)])});
+  const invSig= z===2 ? 1 : 2;   // 1/σ: σ = 1/2 on the Bethe lattice, σ = 1 for the chain
+  ser6.push({color:C.muted,dash:[2,4],width:1.2,noScale:true,pts:xs6.map(x=>[x,sXi(pc-0.001,z)*Math.pow(x/0.001,-invSig)])});
   plot($('c6'),{x:[1e-4,0.3],logx:true,logy:true,series:ser6,xlabel:'|p − p_c|',ylabel:'s_ξ'});
   // N(l)
   const ls=Array.from({length:LG+1},(_,l)=>l);
@@ -516,6 +522,16 @@ function drawAll(){
   $('sumTable').innerHTML='<thead><tr><th>p</th><th style="text-align:right">ℓ<sub>ξ</sub></th><th style="text-align:right">1 + Σ N(ℓ), exact</th><th style="text-align:right">1 + Σ N(ℓ), simulated (ℓ ≤ 40)</th><th style="text-align:right">χ(p), exact</th><th style="text-align:right">χ(p), simulated ± standard error</th></tr></thead><tbody>'+rows.join('')+'</tbody>';
   $('zTable').innerHTML='<thead><tr><th>z</th><th style="text-align:right">p<sub>c</sub> = 1/(z − 1)</th><th style="text-align:right">P<sub>∞</sub> slope 2z/(z − 2)</th><th style="text-align:right">χ amplitude p<sub>c</sub>(1 + p<sub>c</sub>)</th><th>β</th><th>γ</th><th>τ</th><th>σ</th></tr></thead><tbody>'+
     OTHERZ.map(q=>{ const c=pcOf(q); return `<tr${q===z?' style="background:var(--grid)"':''}><td><b>${q}${q===2?' (chain)':''}</b></td><td class="num">${f3(c,4)}</td><td class="num">${q>2?f3(2*q/(q-2),3):'jump at p = 1'}</td><td class="num">${f3(c*(1+c),3)}</td><td>${q>2?'1':'–'}</td><td>1</td><td>${q>2?'5/2':'–'}</td><td>${q>2?'1/2':'1'}</td></tr>`; }).join('')+'</tbody>';
+  if (z===2){
+    // the chain has p_c = 1 at the end of the range: the Bethe (mean-field) values do not apply
+    $('expTable').innerHTML='<thead><tr><th>Exponent</th><th>Definition</th><th style="text-align:right">Exact (chain, z = 2)</th><th style="text-align:right">Simulation, z = 2</th><th>Check</th></tr></thead><tbody>'+
+    `<tr><td><b>β</b></td><td>P<sub>∞</sub> ∝ (p − p<sub>c</sub>)<sup>β</sup></td><td class="num">–</td><td class="num">–</td><td>no p above p<sub>c</sub> = 1; P<sub>∞</sub> jumps from 0 to 1 at p = 1</td></tr>`+
+    `<tr><td><b>γ</b></td><td>χ ∝ (p<sub>c</sub> − p)<sup>−γ</sup></td><td class="num">1</td><td class="num">${f3(M.gamma)}</td><td>χ = (1 + p)/(1 − p)</td></tr>`+
+    `<tr><td><b>τ</b></td><td>n(s, p<sub>c</sub>) ∝ s<sup>−τ</sup></td><td class="num">–</td><td class="num">–</td><td>n(s, p) = (1 − p)<sup>2</sup> p<sup>s</sup> decays exponentially for every p &lt; 1</td></tr>`+
+    `<tr><td><b>σ</b></td><td>s<sub>ξ</sub> ∝ |p − p<sub>c</sub>|<sup>−1/σ</sup></td><td class="num">1</td><td class="num">exact formula</td><td>s<sub>ξ</sub> = −1/ln p ≈ (1 − p)<sup>−1</sup></td></tr>`+
+    `<tr><td><b>ℓ<sub>ξ</sub> exponent</b></td><td>ℓ<sub>ξ</sub> ∝ (p<sub>c</sub> − p)<sup>−1</sup> in chemical distance</td><td class="num">1</td><td class="num">exact formula</td><td>ℓ<sub>ξ</sub> = −1/ln p; on the chain chemical and Euclidean distance coincide, ν = 1</td></tr>`+
+    `<tr><td><b>d<sub>c</sub></b></td><td>hyperscaling D − d = −β/ν</td><td class="num">–</td><td class="num">–</td><td>the chain is one-dimensional (D = d = 1), not mean field</td></tr></tbody>`;
+  } else
   $('expTable').innerHTML='<thead><tr><th>Exponent</th><th>Definition</th><th style="text-align:right">Exact (Bethe, mean field)</th><th style="text-align:right">Simulation, z = '+z+'</th><th>Check</th></tr></thead><tbody>'+
     `<tr><td><b>β</b></td><td>P<sub>∞</sub> ∝ (p − p<sub>c</sub>)<sup>β</sup></td><td class="num">1</td><td class="num">${f3(M.beta)}</td><td>β = (τ − 2)/σ = 1</td></tr>`+
     `<tr><td><b>γ</b></td><td>χ ∝ (p<sub>c</sub> − p)<sup>−γ</sup></td><td class="num">1</td><td class="num">${f3(M.gamma)}</td><td>γ = (3 − τ)/σ = 1</td></tr>`+
